@@ -2,15 +2,21 @@
   "name": "monto-js-sandbox",
   "version": "0.1.0",
   "description": "Various types of js sandbox",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "directories": {
     "test": "test"
   },
+  "module": "dist",
   "scripts": {
     "clean:dist": "rimraf dist",
-    "build:types": "yarn clean:dist && tsc -b ./tsconfig.types.json",
-    "build": "yarn build:types && rollup src/index.js --file dist/bundle.js --format es",
+    "clean:ts-dist": "rimraf ts-dist",
+    "build:types": "yarn clean:ts-dist && tsc",
+    "build:rollup": "yarn clean:dist && rollup -c",
+    "build:prod": "yarn clean:dist && rollup -c --environment NODE_ENV:production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -28,15 +34,15 @@
   },
   "homepage": "https://github.com/duheng1992/monto-js-sandbox#readme",
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.23.7",
-    "@babel/preset-env": "^7.23.8",
+    "@babel/core": "^7.23.9",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/preset-env": "^7.23.9",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-node-resolve": "^15.2.3",
     "rimraf": "^5.0.5",
     "rollup": "^4.9.6",
-    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
+    "tslib": "^2.6.2",
     "typescript": "^5.3.3"
   }
 }

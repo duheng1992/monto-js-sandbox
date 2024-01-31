@@ -1,3 +1,5 @@
+import { isObjectNotFunction } from './utils';
+
 interface OPTIONS {
   // iframe 挂载点 dom
   rootElm: HTMLElement | Document;
@@ -8,18 +10,18 @@ interface OPTIONS {
   scriptText?: string;
 }
 
-interface StringObject {  
-  [key: string]: string;  
+interface StringObject {
+  [key: string]: string;
 };
 
 class IframeSandbox {
   $options: OPTIONS;
-  $iframe: HTMLElement | null;
-  $iframeWindow: Window;
+  $iframe: HTMLIFrameElement | null = null;
+  $iframeWindow: Window | null = null;
 
   constructor(options: OPTIONS) {
     if (!window) {
-      throw new Error('opening iframe sandbox needs the supporting of BROWSER ！');
+      throw new Error('Opening iframe sandbox needs the supporting of BROWSER ！');
     }
 
     this.$options = options;
@@ -27,15 +29,20 @@ class IframeSandbox {
   }
 
   createSandbox() {
+    if (!isObjectNotFunction(this.$options)) {
+      throw new Error('The options should be object !');
+    }
+
     const { rootElm, id, url } = this.$options;
     const iframe = window.document.createElement("iframe");
     const attrs: StringObject = {
+      sandbox: "allow-scripts",
       src: "about:blank",
-      "app-id": id,
-      "app-src": url,
+      "app-id": <string>id,
+      "app-src": <string>url,
       style: "border:none;width:100%;height:100%;",
     };
-    Object.keys(attrs).forEach((name) => {
+    Object.keys(attrs).forEach((name: string) => {
       iframe.setAttribute(name, attrs[name]);
     });
     rootElm?.appendChild(iframe);
@@ -48,15 +55,21 @@ class IframeSandbox {
   }
 
   execScript(scriptText: string) {
+    if (!this.$iframeWindow) {
+      throw new Error('The current sandbox has been destroyed');
+    }
+
     this.$options.scriptText = scriptText;
     const scriptElement =
-      this.$iframeWindow.document.createElement("script");
-    scriptElement.textContent = `
+      this.$iframeWindow?.document.createElement("script");
+    if (scriptElement) {
+      scriptElement.textContent = `
 (function(window) {
   ${scriptText}
 })(window);
 `;
-    this.$iframeWindow.document.head.appendChild(scriptElement);
+      this.$iframeWindow?.document.head.appendChild(scriptElement);
+    }
   }
 
   destroy() {
@@ -64,6 +77,7 @@ class IframeSandbox {
       this.$iframe.parentNode?.removeChild(this.$iframe);
     }
     this.$iframe = null;
+    this.$iframeWindow = null;
   }
 }
 

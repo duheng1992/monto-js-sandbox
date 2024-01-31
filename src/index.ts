@@ -1,3 +1,4 @@
 import IframeSandbox from "./iframe";
+import ProxySandbox from './proxy';
 
-export { IframeSandbox }
+export { IframeSandbox, ProxySandbox }
