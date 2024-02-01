@@ -15,6 +15,7 @@
     "strict": true, /* 启用所有严格类型检查选项 */
     "noImplicitAny": false, /* 检查隐含 any 类型的表达式和声明 */
     "strictNullChecks": true, /* 严格空检查. */
+    "allowSyntheticDefaultImports": true,
     /* 额外检查 */
     "noUnusedLocals": true, /* 检查无用的变量. */
     /* Module Resolution Options */

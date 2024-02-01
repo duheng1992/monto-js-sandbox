@@ -12,10 +12,9 @@ interface StringObject {
 
 class SnapshotSandbox {
   $options: OPTIONS;
-  $proxy: object | null = null;
   $root: object | null = null;
   $memory: StringObject = {};
-  $diffPropsMap: StringObject = {};
+  // $diffPropsMap: StringObject = {};
 
   constructor(options: OPTIONS) {
     this.$options = options;
