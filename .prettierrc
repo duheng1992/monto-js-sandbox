@@ -1,0 +1,18 @@
+{
+  "printWidth": 120,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "bracketSpacing": true,
+  "overrides": [
+    {
+      "files": ["package.json", "yarn.lock"],
+      "options": {
+        "tabWidth": 2,
+        "proseWrap": "never",
+        "singleQuote": false
+      }
+    }
+  ]
+}

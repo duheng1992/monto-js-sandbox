@@ -4,8 +4,8 @@ interface OPTIONS {
   // 要代理的对象
   rootElm?: HTMLElement | Document;
   scriptText?: string;
-  interceptFunction?: Function;
-  interceptEval?: Function;
+  interceptFunction?: () => void;
+  interceptEval?: () => void;
 }
 
 class ProxySandbox {
@@ -15,9 +15,9 @@ class ProxySandbox {
 
   constructor(options: OPTIONS) {
     // 获取 globalThis
-    const global = <unknown>Function('return this')();
+    const global = <object>Function('return this')();
     if (!global) {
-      throw new Error('opening proxy sandbox needs the supporting of BROWSER or Node.js ！');
+      throw new Error('Opening proxy sandbox needs the supporting of BROWSER or Node.js ！');
     }
 
     this.$root = global;
@@ -44,7 +44,7 @@ class ProxySandbox {
             if (this.$options.interceptFunction) return (...args) => Function(...args).bind(this.$proxy);
             break;
           case 'eval':
-            if (this.$options.interceptEval) return code => Function(`return ${code}`).bind(this.$proxy);
+            if (this.$options.interceptEval) return (code) => Function(`return ${code}`).bind(this.$proxy);
             break;
         }
 
@@ -58,9 +58,9 @@ class ProxySandbox {
 
       has: (target, prop) => {
         if (prop[0] === '_') {
-          return false; // 如果属性名以下划线开头，则该属性不可枚举  
+          return false; // 如果属性名以下划线开头，则该属性不可枚举
         }
-        return prop in target; // 否则，按照默认行为执行  
+        return prop in target; // 否则，按照默认行为执行
       },
     });
   }

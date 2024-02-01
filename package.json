@@ -17,7 +17,14 @@
     "build:types": "yarn clean:ts-dist && tsc",
     "build:rollup": "yarn clean:dist && rollup -c",
     "build:prod": "yarn clean:dist && rollup -c --environment NODE_ENV:production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "src/**/*.{js,ts}": [
+      "eslint --fix",
+      "yarn prettier -w"
+    ]
   },
   "repository": {
     "type": "git",
@@ -39,6 +46,12 @@
     "@babel/preset-env": "^7.23.9",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
+    "eslint": "^8.56.0",
+    "husky": "^8.0.2",
+    "lint-staged": "^15.2.1",
+    "prettier": "^2.7.1",
     "rimraf": "^5.0.5",
     "rollup": "^4.9.6",
     "rollup-plugin-typescript2": "^0.36.0",

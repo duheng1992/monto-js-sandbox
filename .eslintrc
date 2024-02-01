@@ -1,0 +1,34 @@
+{
+  "env": {
+    "node": true,
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "ignorePatterns": ["node_modules/", "dist/", "ts-dist/"],
+  "parserOptions": {
+    "sourceType": "module",
+    "babelOptions": {
+      "ecmaVersion": "es2020",
+      "ecmaFeatures": {
+        "globalReturn": true,
+        "jsx": true
+      },
+      "lib": ["ES2020"]
+    }
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.js"],
+      "rules": {
+        "no-undef": "off"
+      }
+    }
+  ]
+}
+
