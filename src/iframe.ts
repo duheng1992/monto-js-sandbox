@@ -1,5 +1,11 @@
 import { isObjectNotFunction } from './utils';
 
+declare global {
+  interface Window {
+    $postMessage: (message: string, targetOrigin: string) => void | undefined;
+  }
+}
+
 interface OPTIONS {
   // iframe 挂载点 dom
   rootElm: HTMLElement | Document;
@@ -7,12 +13,13 @@ interface OPTIONS {
   id: string;
   // iframe 的 url
   url?: string;
+  origin?: string;
   scriptText?: string;
 }
 
 interface StringObject {
   [key: string]: string;
-};
+}
 
 class IframeSandbox {
   $options: OPTIONS;
@@ -30,43 +37,49 @@ class IframeSandbox {
 
   createSandbox() {
     if (!isObjectNotFunction(this.$options)) {
-      throw new Error('The options should be object !');
+      throw new Error('The options should be an object !');
     }
 
-    const { rootElm, id, url } = this.$options;
-    const iframe = window.document.createElement("iframe");
+    const { rootElm, id } = this.$options;
+    const iframe = window.document.createElement('iframe');
+
+    // if (iframe.contentWindow?.postMessage) {
+    //   iframe.onload = () => {
+    //     window.$postMessage = (iframe.contentWindow as Window).postMessage;
+    //   };
+    // }
+
     const attrs: StringObject = {
-      sandbox: "allow-scripts",
-      src: "about:blank",
-      "app-id": <string>id,
-      "app-src": <string>url,
-      style: "border:none;width:100%;height:100%;",
+      // sandbox: "allow-same-origin allow-scripts",
+      src: 'about:blank',
+      'app-id': <string>id,
+      style: 'border:none;width:100%;height:100%;',
     };
     Object.keys(attrs).forEach((name: string) => {
       iframe.setAttribute(name, attrs[name]);
     });
+
+    // 插入文档流中
     rootElm?.appendChild(iframe);
 
     // 挂载上后才会有 contentWindow
     this.$iframe = iframe;
     this.$iframeWindow = iframe.contentWindow;
 
-    return iframe;
+    return iframe.contentWindow;
   }
 
-  execScript(scriptText: string) {
+  active(scriptText: string) {
     if (!this.$iframeWindow) {
       throw new Error('The current sandbox has been destroyed');
     }
-
     this.$options.scriptText = scriptText;
-    const scriptElement =
-      this.$iframeWindow?.document.createElement("script");
+    const scriptElement = this.$iframeWindow?.document.createElement('script');
     if (scriptElement) {
       scriptElement.textContent = `
-(function(window) {
+(function() {
   ${scriptText}
-})(window);
+})();
 `;
       this.$iframeWindow?.document.head.appendChild(scriptElement);
     }

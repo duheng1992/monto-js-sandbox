@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+  .box1 {
+    background-color: yellow;
+    height: 100px;
+    width: 100px
+  }
+</style>
+<script type="module">
+  import { IframeSandbox } from '/dist/index.esm.js';
+
+  const scriptText = `
+    const box = window.document.createElement('div');
+    box.classList.add('box1');
+    box.innerText = '我是 iframe 内部的盒子, 使用样式 box1';
+    window.document.body.appendChild(box);
+  `;
+
+  const sb = new IframeSandbox({
+    rootElm: document.body,
+    id: 'iframe-test',
+  });
+
+  sb.active(scriptText);
+</script>
+
+<div class="box1">
+  我是外部的盒子, 使用样式 box1
+</div>
+
+</html>
