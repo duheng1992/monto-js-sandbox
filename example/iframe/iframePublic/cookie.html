@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+  <button id="setbtn">设置 iframe 数据</button>
+  <button id="btn">获取 iframe 数据</button>
+
+  <script>
+    function getCookie(name) {
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+      }
+      return null;
+    }
+
+    const setData = () => {
+      document.cookie = "userInfo=John Doe from iframe";
+    }
+    document.querySelector('#setbtn').addEventListener('click', setData);
+
+    const getData = () => {
+      console.log('内部的 cookie: ', getCookie('userInfo'));
+      console.log(localStorage);
+    }
+    btn.addEventListener('click', getData);
+  </script>
+</body>
+
+</html>

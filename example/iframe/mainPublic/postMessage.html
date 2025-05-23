@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<script type="module">
+  import { IframeSandbox } from '/dist/index.esm.js';
+
+  const origin = 'http://localhost:4445';
+
+  const sb = new IframeSandbox({
+    rootElm: document.body,
+    id: 'iframe-test',
+    origin,
+    url: `${origin}/postMessage.html`,
+  });
+
+  // 父容器接受
+  window.addEventListener("message", function (event) {
+    if (window === event.source) {
+      return
+    }
+
+    if (event.origin === origin) {
+      console.log('Message from iframe:', event.data);
+      if (event.source) {
+        setTimeout(() => {
+          event.source.postMessage('callback message to iframe', origin)
+        }, 2000);
+      }
+    }
+  });
+</script>
+
+</html>

@@ -1,4 +1,3 @@
-// micro-server.js
 import express from "express";
 import morgan from "morgan";
 import path from "path";
@@ -20,12 +19,12 @@ app.use((req, res, next) => {
 });
 
 app.use(
-  express.static(path.join("public"), {
+  express.static(path.join("iframePublic"), {
     etag: true,
     lastModified: true,
   })
 );
 
 // 启动 Node 服务
-app.listen(port, host);
-console.log(`server start at http://${host}:${port}/`);
+app.listen(port.iframe, host);
+console.log(`iframe server start at http://${host}:${port.iframe}/`);

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+  <script>
+    const parentOrigin = 'http://localhost:4444';
+    const scriptText = `
+      const btn = window.document.createElement('button');
+      btn.innerText = '我是 iframe， 点我向父容器通信';
+      window.document.body.appendChild(btn);
+
+      btn.addEventListener('click', () => {
+        if (window.parent?.postMessage) {
+          window.parent.postMessage('message to main', '${parentOrigin}');
+        }
+      });
+
+      window.addEventListener("message", function (event) {
+        if (window === event.source) {
+          return
+        }
+
+        if (event.origin === '${parentOrigin}') {
+          console.log('Message from main:', event.data);
+        }
+      })
+    `;
+
+    window.addEventListener('message', (event) => {
+      if (event.origin !== parentOrigin) return; // 验证来源
+      if (event.data.type === 'MONTO_IFRAME_READY') {
+        const script = document.createElement('script');
+        script.textContent = scriptText;
+        document.head.appendChild(script);
+      }
+    });
+  </script>
+</body>
+
+</html>

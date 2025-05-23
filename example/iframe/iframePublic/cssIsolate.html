@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+  .box1 {
+    background-color: blue;
+    color: #fff;
+    height: 100px;
+    width: 100px
+  }
+</style>
+
+<body>
+  <script>
+    const scriptText = `
+       const box = window.document.createElement('div');
+        box.classList.add('box1');
+        box.innerText = '我是 iframe 内部的盒子, 使用样式 box1';
+        window.document.body.appendChild(box);
+    `;
+
+    window.addEventListener('message', (event) => {
+      if (event.origin !== 'http://localhost:4444') return; // 验证来源
+      if (event.data.type === 'MONTO_IFRAME_READY') {
+        const script = document.createElement('script');
+        script.textContent = scriptText;
+        document.head.appendChild(script);
+      }
+    });
+  </script>
+</body>
+
+</html>

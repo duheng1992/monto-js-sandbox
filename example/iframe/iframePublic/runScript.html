@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+  <script>
+    const scriptText = `
+      console.log(window.top !== window ? '我在 iframe 中' : '我不在 iframe 中');
+      var a = 111;
+      console.log('a: ', a);
+      window.aa = 1111;
+      console.log('aa: ',aa);
+    `;
+
+    window.addEventListener('message', (event) => {
+      if (event.origin !== 'http://localhost:4444') return; // 验证来源
+      if (event.data.type === 'MONTO_IFRAME_READY') {
+        const script = document.createElement('script');
+        script.textContent = scriptText;
+        document.head.appendChild(script);
+      }
+    });
+  </script>
+
+</body>
+
+</html>

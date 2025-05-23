@@ -10,7 +10,7 @@
     "morgan": "^1.10.0"
   },
   "scripts": {
-    "dev": "node sandbox-server.js",
+    "dev": "node index.js & node iframe.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

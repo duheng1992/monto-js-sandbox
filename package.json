@@ -15,7 +15,7 @@
     "clean:dist": "rimraf dist",
     "clean:ts-dist": "rimraf ts-dist",
     "build:types": "yarn clean:ts-dist && tsc",
-    "build:rollup": "yarn clean:dist && rollup -c",
+    "build:dev": "yarn clean:dist && rollup -c",
     "build:prod": "yarn clean:dist && rollup -c --environment NODE_ENV:production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<script type="module">
+  import { IframeSandbox } from '/dist/index.esm.js';
+
+  const sb = new IframeSandbox({
+    rootElm: document.body,
+    id: 'iframe-test',
+    origin: 'http://localhost:4445',
+    url: 'http://localhost:4445/runScript.html',
+  });
+
+  var a = 222;
+  window.aa = 2222;
+
+  const getData = () => {
+    console.log(window.top !== window ? '我在 iframe 中' : '我不在 iframe 中');
+    console.log('外部的 a: ', a);
+    console.log('外部的 window.aa: ', window.aa);
+  }
+  btn.addEventListener('click', getData);
+  // sb.destroy();
+</script>
+
+<button id="btn">获取外部数据</button>
+
+</html>

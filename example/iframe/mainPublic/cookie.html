@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<!-- iframe 的 cookie 是否与外部隔离取决于 同源策略：
+
+同源 iframe (协议+域名+端口相同)
+
+✅ 不隔离：共享相同的 cookie 存储
+
+示例：https://example.com 和 https://example.com/page.html
+
+跨域 iframe (比如本项目的 src: 'about:blank')
+
+✅ 完全隔离：无法互相访问对方的 cookie, localhost 除外
+
+示例：https://example.com 和 https://other.com
+
+同主域不同子域
+
+⚠️ 默认隔离，但可通过设置共享
+
+示例：https://a.example.com 和 https://b.example.com -->
+
+模拟本地开发环境，浏览器（尤其是 Chrome）将 http://localhost:4444 和 http://localhost:4445 视为 "同站"（SameSite），尽管端口不同，cookie 可以共享，但
+localStorage 不可以
+<br />
+<button id="setbtn">设置外部数据</button>
+<button id="btn">获取外部数据</button>
+
+<script type="module">
+  import { IframeSandbox } from '/dist/index.esm.js';
+
+  function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+  }
+
+  const sb = new IframeSandbox({
+    rootElm: document.body,
+    id: 'iframe-test',
+    origin: 'http://localhost:4445',
+    url: 'http://localhost:4445/cookie.html',
+  });
+
+  const setData = () => {
+    document.cookie = "userInfo=John Doe";
+  }
+  setbtn.addEventListener('click', setData);
+
+  const getData = () => {
+    console.log('外部的 cookie: ', getCookie('userInfo'));
+    console.log(localStorage);
+  }
+  btn.addEventListener('click', getData);
+</script>
+
+</html>
