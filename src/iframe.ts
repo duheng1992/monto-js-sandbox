@@ -74,7 +74,7 @@ class IframeSandbox {
       });
 
       // 锁定 window.parent，防止被覆盖
-      Object.defineProperty(iframe.contentWindow, 'parent', {
+      Reflect.defineProperty(iframe.contentWindow, 'parent', {
         value: safeParent,
         writable: false,
         configurable: false,

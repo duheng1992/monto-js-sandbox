@@ -1,3 +1,8 @@
+// 代理目标对象：通过 Proxy 包装一个基础对象（rootElm 或 this.$root），拦截所有属性访问和操作
+// 控制全局变量访问：特别处理 window、global 等全局对象的访问，防止逃逸
+// 函数执行控制：对 Function 和 eval 进行特殊处理，绑定执行上下文
+// 属性隐藏：以下划线开头的属性不可枚举
+
 import { isObjectNotFunction } from './utils';
 
 interface OPTIONS {
@@ -32,14 +37,17 @@ class ProxySandbox {
 
     const { rootElm } = this.$options;
     this.$proxy = new Proxy(rootElm || this.$root, {
+      // target: 表示被代理的原对象
+      // prop：要获取的对象上的属性，理论上 target[prop] 就是当前对象值
       get: (target, prop) => {
-        // 避免 globalThis.globalThis 和 window.window 访问的情况
+        // 避免 globalThis.globalThis 和 window.window 访问到原生对象的情况
         switch (prop) {
           case 'window':
           case 'global':
           case 'self':
           case 'globalThis':
             return this.$proxy;
+
           case 'Function':
             if (this.$options.interceptFunction) return (...args) => Function(...args).bind(this.$proxy);
             break;
@@ -61,6 +69,20 @@ class ProxySandbox {
           return false; // 如果属性名以下划线开头，则该属性不可枚举
         }
         return prop in target; // 否则，按照默认行为执行
+      },
+
+      ownKeys: (target) => {
+        return Reflect.ownKeys(target).filter((key) => {
+          if (typeof key === 'string') return !key.startsWith('_');
+          return true;
+        });
+      },
+
+      getOwnPropertyDescriptor: (target, prop) => {
+        if (typeof prop === 'string' && prop[0] === '_') {
+          return undefined;
+        }
+        return Reflect.getOwnPropertyDescriptor(target, prop);
       },
     });
   }
