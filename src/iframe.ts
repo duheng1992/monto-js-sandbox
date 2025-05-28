@@ -15,6 +15,32 @@ interface StringObject {
   [key: string]: string;
 }
 
+/**
+ * 沙箱化 iframe 类
+ *
+ * @example
+ * ```ts
+ * const iframeSandbox = new IframeSandbox({
+ *   rootElm: document.body,
+ *   id: 'iframe',
+ *   url: 'https://www.baidu.com',
+ * });
+ * ```
+ * @param options
+ * @param options.rootElm 挂载点 dom
+ * @param options.id iframe 的 id
+ * @param options.url iframe 的 url
+ * @param options.origin iframe 的 origin
+ * @param options.scriptText iframe 的脚本
+ *
+ * @description 沙箱化 iframe 的脚本执行
+ * 1. 创建 iframe 元素
+ * 2. 设置 iframe 的属性
+ * 3. 插入文档流中
+ * 4. 锁定 window.parent，防止被覆盖
+ * 5. 在 iframe 的脚本中执行（沙箱化代码）
+ * 6. 销毁
+ */
 class IframeSandbox {
   $options: OPTIONS;
   $iframe: HTMLIFrameElement | null = null;
@@ -56,7 +82,7 @@ class IframeSandbox {
     // 插入文档流中
     rootElm?.appendChild(iframe);
 
-    // 安全处理 (同源情况下生效)
+    // TODO: 安全处理 (同源情况下生效, 跨域 iframe 无法直接操作 contentWindow 的属性)
     if (iframe.contentWindow) {
       // 在 iframe 的脚本中执行（沙箱化代码）
       const safeParent = new Proxy(iframe.contentWindow.parent, {

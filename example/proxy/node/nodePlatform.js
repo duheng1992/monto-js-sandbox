@@ -1,6 +1,7 @@
+// 在 node 环境下，使用 ProxySandbox 沙箱化全局对象
 // 执行 node proxy/nodePlatform.js 即可调试
 
-import { ProxySandbox } from '../../dist/index.esm.js';
+import { ProxySandbox } from './dist/index.esm.js';
 
 const sb = new ProxySandbox({
   rootElm: globalThis

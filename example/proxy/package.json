@@ -1,0 +1,19 @@
+{
+  "name": "proxy",
+  "version": "1.0.2",
+  "description": "js proxy sandbox",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ip": "^1.1.8",
+    "morgan": "^1.10.0"
+  },
+  "scripts": {
+    "dev": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "heng.du",
+  "license": "ISC"
+}
