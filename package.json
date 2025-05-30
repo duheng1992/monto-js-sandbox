@@ -1,6 +1,6 @@
 {
   "name": "monto-js-sandbox",
-  "version": "0.1.0",
+  "version": "0.0.9",
   "description": "Various types of js sandbox",
   "main": "src/index.ts",
   "type": "module",
@@ -18,7 +18,9 @@
     "build:dev": "yarn clean:dist && rollup -c",
     "build:prod": "yarn clean:dist && rollup -c --environment NODE_ENV:production",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "prepublishOnly": "yarn build:prod",
+    "publish:patch": "npm version patch && npm publish && git push origin master"
   },
   "lint-staged": {
     "src/**/*.{js,ts}": [
@@ -46,6 +48,7 @@
     "@babel/preset-env": "^7.23.9",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-terser": "^0.4.4",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.20.0",
     "eslint": "^8.56.0",
@@ -57,5 +60,8 @@
     "rollup-plugin-typescript2": "^0.36.0",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "quickjs-emscripten": "^0.31.0"
   }
 }
