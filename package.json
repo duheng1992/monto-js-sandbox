@@ -2,7 +2,6 @@
   "name": "monto-js-sandbox",
   "version": "0.0.12",
   "description": "Various types of js sandbox",
-  "main": "src/index.ts",
   "type": "module",
   "engines": {
     "node": ">=18.0.0"
@@ -10,7 +9,13 @@
   "directories": {
     "test": "test"
   },
-  "module": "dist",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "exports": {
+    "import": "./dist/index.esm.js",
+    "require": "./dist/index.js"
+  },
+  "types": "dist/index.d.ts",
   "scripts": {
     "clean:dist": "rimraf dist",
     "clean:ts-dist": "rimraf ts-dist",
@@ -37,7 +42,7 @@
     "sandbox"
   ],
   "author": "heng.du",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/duheng1992/monto-js-sandbox/issues"
   },
