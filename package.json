@@ -1,6 +1,6 @@
 {
   "name": "monto-js-sandbox",
-  "version": "0.1.0",
+  "version": "0.0.9",
   "description": "Various types of js sandbox",
   "main": "src/index.ts",
   "type": "module",
@@ -46,6 +46,7 @@
     "@babel/preset-env": "^7.23.9",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-terser": "^0.4.4",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.20.0",
     "eslint": "^8.56.0",

@@ -2,6 +2,6 @@ import IframeSandbox from './iframe';
 import ProxySandbox from './proxy';
 import SnapshotSandbox from './snapshot';
 import WebComponentSandbox from './webcomponent';
-// import VMSandbox from './vm';
+import QuickJSSandbox from './wasm';
 
-export { IframeSandbox, ProxySandbox, SnapshotSandbox, WebComponentSandbox };
+export { IframeSandbox, ProxySandbox, SnapshotSandbox, WebComponentSandbox, QuickJSSandbox };

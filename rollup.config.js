@@ -1,36 +1,33 @@
 import typescript from 'rollup-plugin-typescript2'; // 处理typescript
 import babel from '@rollup/plugin-babel';
+import terser from '@rollup/plugin-terser';
 
-const config = [
+const isProd = process.env.NODE_ENV === 'production';
+
+const plugins = [
+  typescript({
+    tsconfigOverride: { compilerOptions: { declaration: true } }
+  }),
+  babel({
+    babelrc: false,
+    presets: [['@babel/preset-env', { modules: false, loose: true, targets: '> 0.25%, not dead' }]],
+    plugins: [['@babel/plugin-proposal-class-properties', { loose: true }]],
+    exclude: 'node_modules/**',
+    babelHelpers: 'bundled'
+  })
+];
+
+if (isProd) {
+  plugins.push(terser());
+}
+
+export default [
   {
     input: 'src/index.ts',
-    plugins: [
-      typescript(), // typescript 转义
-      babel({
-        babelrc: false,
-        presets: [['@babel/preset-env', { modules: false, loose: true }]],
-        plugins: [['@babel/plugin-proposal-class-properties', { loose: true }]],
-        exclude: 'node_modules/**',
-      })
-    ],
+    plugins,
     output: [
-      { file: 'dist/index.js', format: 'cjs' },
-      { file: 'dist/index.esm.js', format: 'es' }
+      { file: 'dist/index.js', format: 'cjs', sourcemap: true },
+      { file: 'dist/index.esm.js', format: 'es', sourcemap: true }
     ]
   }
 ];
-
-const env = process.env.NODE_ENV // umd 模式的编译结果文件输出的全局变量名称
-// 若打包正式环境，压缩代码 
-if (env === 'production') {
-  // config.plugins.push(terser({
-  //   compress: {
-  //     pure_getters: true,
-  //     unsafe: true,
-  //     unsafe_comps: true,
-  //     warnings: false
-  //   }
-  // }))
-}
-
-export default config

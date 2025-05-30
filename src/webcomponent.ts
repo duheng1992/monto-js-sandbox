@@ -86,7 +86,7 @@ class WebComponentSandbox {
         this.sandboxGlobal[key] = (window as any)[key];
       }
     });
-    // 自动暴露 shadowRoot 下的所有 id 元素为变量
+    // 自动暴露 shadowRoot 下的所有 id 元素为变量 （与现代浏览器自动暴露带id的dom一致）
     if (this.shadowRoot) {
       const nodes = this.shadowRoot.querySelectorAll('[id]');
       nodes.forEach((node) => {
@@ -109,11 +109,11 @@ class WebComponentSandbox {
 
     // 用 new Function 动态执行，参数注入沙盒变量
     const fn = new Function(
-      ...paramNames,
+      ...paramNames, // 传参，相当于把本地的 globalThis 传给沙盒
       `
       "use strict";
       (function() {
-        ${script}
+        ${script} // 可用过 arguments 获取入参，也可以直接访问 root，root 是 shadowRoot 的代理，可以访问 shadowRoot 下的所有元素
       }).apply(null, arguments);
     `
     );

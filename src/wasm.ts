@@ -5,51 +5,17 @@
 // 3. 提供 eval/run 方法让用户代码在沙盒内执行
 // 4. 可选：桥接部分 API（如 console、postMessage）到沙盒
 // 5. 支持多实例、资源限制、销毁
-//
-// 典型用法（伪代码）：
-//
-// import { getQuickJS } from 'quickjs-emscripten';
-//
-// async function runSandboxedJS(code: string) {
-//   const QuickJS = await getQuickJS();
-//   const vm = QuickJS.createVm();
-//
-//   // 可选：桥接 console.log
-//   vm.setProp(vm.global, 'console', vm.newObject());
-//   vm.setProp(vm.getProp(vm.global, 'console'), 'log', vm.newFunction('log', (...args) => {
-//     console.log('[沙盒]', ...args.map(arg => vm.dump(arg)));
-//   }));
-//
-//   const result = vm.evalCode(code);
-//   if (result.error) {
-//     throw new Error(vm.dump(result.error));
-//   }
-//   const value = vm.dump(result.value);
-//   vm.dispose();
-//   return value;
-// }
-//
-// // 示例：
-// runSandboxedJS('console.log("hello"); 1+2').then(console.log); // 输出 3
-//
-// 注意事项：
-// - 沙盒内无法直接访问 window、document、globalThis、DOM、BOM、网络等
-// - 只能通过桥接暴露的 API 与主环境通信
-// - 性能略低于原生 JS，但安全性极高
-// - 适合高安全需求的插件、在线编辑器、低代码等场景
-//
-// 如需完整实现，可参考 quickjs-emscripten 官方文档和 StackBlitz WebContainer 的设计。
-
-// QuickJS + WASM JS 沙盒完整实现（需安装 quickjs-emscripten）
-// npm install quickjs-emscripten
-
 import { getQuickJS } from 'quickjs-emscripten';
 
 /**
  * QuickJSSandbox: 基于 QuickJS + WASM 的高安全 JS 沙盒
  * 支持 run(code: string): Promise<any>
- * 自动桥接 console.log
  * 适合高安全需求的插件、在线编辑器等场景
+ * 
+ * 局限：
+    不能直接操作主环境对象和 DOM
+    性能略低，体积较大
+    需要手动桥接 API
  */
 class QuickJSSandbox {
   private QuickJS: any;
@@ -62,32 +28,52 @@ class QuickJSSandbox {
 
   private async active() {
     this.QuickJS = await getQuickJS();
-    this.vm = this.QuickJS.createVm();
+    this.vm = this.QuickJS.newContext();
     // 桥接 console.log 到主环境
     const vm = this.vm;
-    const qjs = this.QuickJS;
-    const consoleObj = qjs.newObject();
-    const logFn = qjs.newFunction('log', (...args: any[]) => {
+    // const qjs = this.QuickJS;
+    // 在 QuickJS 沙盒环境中桥接（注入）主环境的 console.log 方法，让沙盒内的 JS 代码可以安全地调用 console.log，并把日志输出到主环境的控制台。
+    const consoleObj = vm.newObject();
+    const logFn = vm.newFunction('log', (...args: any[]) => {
       // dump 可将 QuickJS 值转为主环境值
-      console.log('[沙盒]', ...args.map((arg) => qjs.dump(arg)));
+      console.log('[沙盒]', ...args.map((arg) => vm.dump(arg)));
     });
-    qjs.setProp(consoleObj, 'log', logFn);
-    qjs.setProp(vm.global, 'console', consoleObj);
+    vm.setProp(consoleObj, 'log', logFn);
+    vm.setProp(vm.global, 'console', consoleObj);
+    // 这里应该加上，不然会内存泄漏
+    consoleObj.dispose();
+    logFn.dispose();
   }
 
   /**
    * 在沙盒中运行 JS 代码
-   * @param code JS 代码字符串
+   * @param scriptText JS 代码字符串
    * @returns Promise<any> 运行结果
    */
-  async execScript(code: string): Promise<any> {
+  async execScript(scriptText: string): Promise<any> {
     await this.ready;
-    const result = this.vm.evalCode(code);
+    const result = this.vm.evalCode(scriptText);
     if (result.error) {
-      const err = this.QuickJS.dump(result.error);
-      throw new Error('[QuickJSSandbox Error] ' + err);
+      const err = this.vm.dump(result.error);
+      result.error?.dispose?.(); // 释放 error handle
+
+      // 优先用 err.message，否则用 JSON.stringify 或 String
+      let msg = '';
+      if (err && typeof err === 'object' && 'message' in err) {
+        msg = err.message;
+      } else if (typeof err === 'string') {
+        msg = err;
+      } else {
+        try {
+          msg = JSON.stringify(err);
+        } catch {
+          msg = String(err);
+        }
+      }
+      throw new Error('[QuickJSSandbox Error] ' + msg);
     }
-    const value = this.QuickJS.dump(result.value);
+    const value = this.vm.dump(result.value);
+    result.value.dispose(); // 释放 value handle
     return value;
   }
 
