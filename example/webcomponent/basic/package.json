@@ -1,7 +1,7 @@
 {
-  "name": "snapshot",
+  "name": "webcomponent",
   "version": "1.0.2",
-  "description": "js snapshot sandbox",
+  "description": "js webcomponent sandbox",
   "main": "index.js",
   "type": "module",
   "dependencies": {

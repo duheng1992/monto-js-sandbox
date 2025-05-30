@@ -69,12 +69,9 @@ sb.destroy();
 - [ ] 异常捕获与详细日志
 - [ ] 多实例并发隔离支持
 - [ ] 适配微服务
+- [ ] 兼容 cjs
 
 ## BUG
-
-- node 里没办法 require
-- TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /Users/user/Documents/js学习心得/my-vue-app/node/node_modules/.pnpm/monto-js-sandbox@0.0.12/node_modules/monto-js-sandbox/src/index.ts
-- 14:54:56 [vite] Pre-transform error: Failed to resolve entry for package "monto-js-sandbox". The package may have incorrect main/module/exports specified in its package.json.
 
 ## 赞助与支持
 

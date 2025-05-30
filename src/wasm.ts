@@ -5,6 +5,7 @@
 // 3. 提供 eval/run 方法让用户代码在沙盒内执行
 // 4. 可选：桥接部分 API（如 console、postMessage）到沙盒
 // 5. 支持多实例、资源限制、销毁
+
 import { getQuickJS } from 'quickjs-emscripten';
 
 /**
