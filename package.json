@@ -1,6 +1,6 @@
 {
   "name": "monto-js-sandbox",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Various types of js sandbox",
   "main": "src/index.ts",
   "type": "module",
